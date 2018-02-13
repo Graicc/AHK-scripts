@@ -6,6 +6,8 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 ;key rebindings
 CapsLock::Escape
+WheelLeft::Send ^+{Tab}
+WheelRight::Send ^{Tab}
 
 layer:=0
 
@@ -43,7 +45,7 @@ p::F10
 
 BackSpace::Delete
 
-AppsKey::
+f::
 	SetKeyDelay, 200 ; can't be too low, 200 might be lowest, 
 				    ; to accommodate lifting both hands from keys, 
 				 ; otherwise it passes {ENTER}
@@ -53,6 +55,7 @@ AppsKey::
 	Send {ENTER}
 return  
 
+d::Backspace
 
 `::
 IfWinExist Untitled - Notepad
