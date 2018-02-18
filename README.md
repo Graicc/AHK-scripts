@@ -19,4 +19,5 @@ There are also layers contained in the script
 * Backspace -> Del
 * F -> Appskey, down, enter (Autocorrects a word in Google Drive)
 * D -> Backspace (Very usefull in word editing with one hand on the mouse)
+
 (*Note: This list is complete :)*)
