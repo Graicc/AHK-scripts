@@ -8,6 +8,8 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 CapsLock::Escape
 WheelLeft::Send ^+{Tab}
 WheelRight::Send ^{Tab}
+XButton1 & LButton::Send ^w
+XButton1 & RButton::Send ^+t
 
 layer:=0
 
