@@ -10,6 +10,7 @@ WheelLeft::Send ^+{Tab}
 WheelRight::Send ^{Tab}
 XButton1 & LButton::Send ^w
 XButton1 & RButton::Send ^+t
+XButton1::XButton1
 
 layer:=0
 
