@@ -10,15 +10,17 @@ WheelLeft::Send ^+{Tab}
 WheelRight::Send ^{Tab}
 XButton1 & LButton::Send ^w
 XButton1 & RButton::Send ^+t
+XButton1 & WheelLeft::Send ^#{Left}
+XButton1 & WheelRight::Send ^#{Right}
 XButton1::XButton1
 
 layer:=0
 
-LAlt::
+$LAlt::
     layer:=1
 return
 
-LAlt up::
+$LAlt up::
 	#if layer=1
     	layer:=0
 return
