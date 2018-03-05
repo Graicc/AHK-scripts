@@ -9,7 +9,8 @@ This script is based around the idea of layers. The main layer used right now is
 ## Normal Keybindings
 * Capslock -> Escape
 * Mouse Wheel Left / Right -> Swap tabs left and right (^tab / ^+tab)
-* Mouse Wheel Back + Left / Right Click -> Close and restore tabs (^w / ^+t)
+* Mouse Back + Left / Right Click -> Close and restore tabs (^w / ^+t)
+* Mouse Back + Left / Right Click -> Swaps desktops (^#{left} / ^#{right})
 
 ## Other Layers
 There are also layers contained in the script
