@@ -4,14 +4,15 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #SingleInstance force
 
-;key rebindings
-CapsLock::Escape
+;Key / mouse rebindings
+$CapsLock::Escape
 WheelLeft::Send ^+{Tab}
 WheelRight::Send ^{Tab}
 XButton1 & LButton::Send ^w
 XButton1 & RButton::Send ^+t
 XButton1 & WheelLeft::Send ^#{Left}
 XButton1 & WheelRight::Send ^#{Right}
+XButton1 & MButton::XButton2
 XButton1::XButton1
 
 layer:=0
