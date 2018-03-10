@@ -4,7 +4,7 @@ A collection of the AHK scripts that I use. Feel free use them.
 Licensed under the MIT License.
 
 # Changes to your normal input devices
-This script is based around the idea of layers. The main layer used right now is a alt layer opened by holding the right alt key (*Note: This may affect keyboard shortcuts lready mapped to the alt layer*). There are also a few general rebindings, such as capslock to escape.
+This script is based around the idea of layers. The main layer used right now is a alt layer opened by holding the right alt key (*Note: This may affect keyboard shortcuts already mapped to the alt layer*). There are also a few general rebindings, such as capslock to escape.
 
 ## Normal Keybindings
 * Capslock -> Escape
