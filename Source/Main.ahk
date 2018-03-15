@@ -36,18 +36,18 @@ k::Down
 l::Right
 
 ;Function keys
-q::F1
-w::F2
-e::F3
-r::F4
-t::F5
-y::F6
-u::F7
-i::F8
-o::F9
-p::F10
-[::F11
-]::F12
+;q::F1
+;w::F2
+;e::F3
+;r::F4
+;t::F5
+;y::F6
+;u::F7
+;i::F8
+;o::F9
+;p::F10
+;[::F11
+;]::F12
 
 BackSpace::Delete
 
@@ -60,8 +60,6 @@ f::
 	Sleep, 400     ; slow enough to see the menu, fast enough to not take too long
 	Send {ENTER}
 return  
-
-d::Backspace
 
 `::
 IfWinExist Untitled - Notepad
