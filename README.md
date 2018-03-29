@@ -37,6 +37,6 @@ To use OculusAudio, follow the following steps:
 
 * Install nircmd, which can be found [here](http://www.nirsoft.net/utils/nircmd.html) (look all the way at the bottom)
 * Grab a copy of the executable, under OculusAudio/Build/OculusAudio.exe. Alternatively, you can use the source (OculusAudio/Source/OculusAudio.ahk) if you have AHK installed or don't trust random people on the internet.
-* On Windows, hit Windows+R to bring up the run box. Type `shell:startup` to open the startup folder. If you want this to work on all accounts, run `shell:common startup` instead.
+* On Windows, press Windows+R to bring up the run box. Type `shell:startup` to open the startup folder. If you want this to work on all accounts, run `shell:common startup` instead.
 * With the folder that opened, move the file you downloaded into the folder.
 * Now the program will automatically open whenever you log on to your computer, so you no longer have to worry about what audio device your computer is using.
