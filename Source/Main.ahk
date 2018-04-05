@@ -36,6 +36,9 @@ k::Down
 l::Right
 u::Home
 i::End
+^j::Send, {WheelUp}
+^k::Send, {WheelDown}
+
 
 BackSpace::Delete
 
