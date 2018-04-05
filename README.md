@@ -18,6 +18,7 @@ There are also layers contained in the script
 
 ### Alt Layer (*Activated by holding Alt*)
 * HJKL -> Left, Up, Down, Left respectively (This is different from the standered LDUR convention)
+* U / I -> Home / End
 * Backspace -> Del
 * F -> Appskey, down, enter (Autocorrects a word in Google Drive)
 

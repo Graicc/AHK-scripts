@@ -29,35 +29,21 @@ return
 ;Layer ONE
 #if layer=1
 
-;Arrow keys
+;Navigation
 h::Left
 j::Up
 k::Down
 l::Right
-
-;Function keys
-;q::F1
-;w::F2
-;e::F3
-;r::F4
-;t::F5
-;y::F6
-;u::F7
-;i::F8
-;o::F9
-;p::F10
-;[::F11
-;]::F12
+u::Home
+i::End
 
 BackSpace::Delete
 
 f::
-	SetKeyDelay, 200 ; can't be too low, 200 might be lowest, 
-				    ; to accommodate lifting both hands from keys, 
-				 ; otherwise it passes {ENTER}
+	SetKeyDelay, 200
 	Send +{F10}
 	Send {DOWN}     
-	Sleep, 400     ; slow enough to see the menu, fast enough to not take too long
+	Sleep, 400
 	Send {ENTER}
 return  
 
