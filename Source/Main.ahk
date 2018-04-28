@@ -7,6 +7,9 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ;Key / mouse rebindings
 ;For remapping capslock to control and escape I use https://gist.github.com/sedm0784/4443120
 
+XButton1 & WheelLeft::Send ^#{Left}
+XButton1 & WheelRight::Send ^#{Right}
+
 ;Chrome specific mouse aids
 #IfWinActive ahk_exe chrome.exe 
 {
@@ -14,8 +17,6 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 	WheelRight::Send ^{Tab}
 	XButton1 & LButton::Send ^w
 	XButton1 & RButton::Send ^+t
-	XButton1 & WheelLeft::Send ^#{Left}
-	XButton1 & WheelRight::Send ^#{Right}
 	XButton1 & MButton::XButton2
 	XButton1::XButton1
 }
