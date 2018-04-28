@@ -5,17 +5,21 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #SingleInstance force
 
 ;Key / mouse rebindings
-$CapsLock::Escape
-WheelLeft::Send ^+{Tab}
-WheelRight::Send ^{Tab}
-XButton1 & LButton::Send ^w
-XButton1 & RButton::Send ^+t
-XButton1 & WheelLeft::Send ^#{Left}
-XButton1 & WheelRight::Send ^#{Right}
-XButton1 & MButton::XButton2
-XButton1::XButton1
+;For remapping capslock to control and escape I use https://gist.github.com/sedm0784/4443120
 
-layer:=0
+;Chrome specific mouse aids
+#IfWinActive ahk_exe chrome.exe 
+{
+	WheelLeft::Send ^+{Tab}
+	WheelRight::Send ^{Tab}
+	XButton1 & LButton::Send ^w
+	XButton1 & RButton::Send ^+t
+	XButton1 & WheelLeft::Send ^#{Left}
+	XButton1 & WheelRight::Send ^#{Right}
+	XButton1 & MButton::XButton2
+	XButton1::XButton1
+}
+#IfWinActive
 
 $LAlt::
     layer:=1
@@ -45,8 +49,9 @@ BackSpace::Delete
 f::
 	SetKeyDelay, 200
 	Send +{F10}
+	Sleep, 200
 	Send {DOWN}     
-	Sleep, 400
+	Sleep, 200
 	Send {ENTER}
 return  
 
