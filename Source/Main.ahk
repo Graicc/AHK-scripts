@@ -5,17 +5,22 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #SingleInstance force
 
 ;Key / mouse rebindings
-$CapsLock::Escape
-WheelLeft::Send ^+{Tab}
-WheelRight::Send ^{Tab}
-XButton1 & LButton::Send ^w
-XButton1 & RButton::Send ^+t
+;For remapping capslock to control and escape I use https://gist.github.com/sedm0784/4443120
+
 XButton1 & WheelLeft::Send ^#{Left}
 XButton1 & WheelRight::Send ^#{Right}
-XButton1 & MButton::XButton2
-XButton1::XButton1
 
-layer:=0
+;Chrome specific mouse aids
+#IfWinActive ahk_exe chrome.exe 
+{
+	WheelLeft::Send ^+{Tab}
+	WheelRight::Send ^{Tab}
+	XButton1 & LButton::Send ^w
+	XButton1 & RButton::Send ^+t
+	XButton1 & MButton::XButton2
+	XButton1::XButton1
+}
+#IfWinActive
 
 $LAlt::
     layer:=1
@@ -29,39 +34,27 @@ return
 ;Layer ONE
 #if layer=1
 
-;Arrow keys
+;Navigation
 h::Left
 j::Up
 k::Down
 l::Right
+u::Home
+i::End
+^j::Send, {WheelUp}
+^k::Send, {WheelDown}
 
-;Function keys
-q::F1
-w::F2
-e::F3
-r::F4
-t::F5
-y::F6
-u::F7
-i::F8
-o::F9
-p::F10
-[::F11
-]::F12
 
 BackSpace::Delete
 
 f::
-	SetKeyDelay, 200 ; can't be too low, 200 might be lowest, 
-				    ; to accommodate lifting both hands from keys, 
-				 ; otherwise it passes {ENTER}
+	SetKeyDelay, 200
 	Send +{F10}
+	Sleep, 200
 	Send {DOWN}     
-	Sleep, 400     ; slow enough to see the menu, fast enough to not take too long
+	Sleep, 200
 	Send {ENTER}
 return  
-
-d::Backspace
 
 `::
 IfWinExist Untitled - Notepad
