@@ -18,6 +18,7 @@ This script is based around the idea of layers. The main layer used right now is
 There are also layers contained in the script
 
 ### Alt Layer (*Activated by holding Alt*)
+(*Note: You can change what alt key triggers it by selecting the swap alt option from the context menu on the system tray icon*)
 * HJKL -> Left, Up, Down, Left respectively (This is different from the standered LDUR convention)
 * U / I -> Home / End
 * Control + J / K -> Mouse Wheel Up / Mouse Wheel Down

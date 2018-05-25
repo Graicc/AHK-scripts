@@ -4,6 +4,11 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #SingleInstance force
 
+;Settings
+whichAlt:=1
+Menu, tray, add
+Menu, tray, add, Swap alt, SwapAlt
+
 ;Key / mouse rebindings
 ;For remapping capslock to control and escape I use https://gist.github.com/sedm0784/4443120
 
@@ -22,13 +27,24 @@ XButton1 & WheelRight::Send ^#{Right}
 }
 #IfWinActive
 
-$LAlt::
-    layer:=1
+#if whichAlt=1
+	$LAlt::
+			layer:=1
+	return
+	$LAlt up::
+		#if layer=1
+    	layer:=0
+	return
 return
 
-$LAlt up::
-	#if layer=1
+#if whichAlt=2
+	$RAlt::
+    layer:=1
+	return
+	$RAlt up::
+		#if layer=1
     	layer:=0
+	return
 return
 
 ;Layer ONE
@@ -54,7 +70,7 @@ f::
 	Send {DOWN}     
 	Sleep, 200
 	Send {ENTER}
-return  
+return
 
 `::
 IfWinExist Untitled - Notepad
@@ -69,4 +85,18 @@ IfWinExist Untitled - Notepad
 }
 else
 	Run notepad.exe
+return
+
+return ;Now we can define subroutines
+
+SwapAlt:
+	temp:="Right Alt"
+	if whichAlt=1
+		whichAlt:=2
+	else if whichAlt=2
+	{
+		whichAlt:=1
+		temp:="Left Alt"
+	}
+	msgbox, %temp%
 return
