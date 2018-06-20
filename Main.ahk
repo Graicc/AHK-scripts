@@ -33,7 +33,6 @@ XButton1 & WheelRight::Send ^#{Right}
 }
 #IfWinActive
 
-;This code works
 #if whichAlt=1
 	$LAlt::
 		layer:=1
