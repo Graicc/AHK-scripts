@@ -26,12 +26,117 @@ OnExit("Save")
 SetNumLockState, On
 SetCapsLockState, Off
 
+; Caps lock to ctrl and esc https://gist.github.com/sedm0784/4443120
+g_LastCtrlKeyDownTime := 0
+g_AbortSendEsc := false
+g_ControlRepeatDetected := false
+
+*CapsLock::
+    if (g_ControlRepeatDetected)
+    {
+        return
+    }
+
+    send,{Ctrl down}
+    g_LastCtrlKeyDownTime := A_TickCount
+    g_AbortSendEsc := false
+    g_ControlRepeatDetected := true
+
+    return
+
+*CapsLock Up::
+    send,{Ctrl up}
+    g_ControlRepeatDetected := false
+    if (g_AbortSendEsc)
+    {
+        return
+    }
+    current_time := A_TickCount
+    time_elapsed := current_time - g_LastCtrlKeyDownTime
+    if (time_elapsed <= 250)
+    {
+        SendInput {Esc}
+    }
+    return
+
+~*^a::
+~*^b::
+~*^c::
+~*^d::
+~*^e::
+~*^f::
+~*^g::
+~*^h::
+~*^i::
+~*^j::
+~*^k::
+~*^l::
+~*^m::
+~*^n::
+~*^o::
+~*^p::
+~*^q::
+~*^r::
+~*^s::
+~*^t::
+~*^u::
+~*^v::
+~*^w::
+~*^x::
+~*^y::
+~*^z::
+~*^1::
+~*^2::
+~*^3::
+~*^4::
+~*^5::
+~*^6::
+~*^7::
+~*^8::
+~*^9::
+~*^0::
+~*^Space::
+~*^Backspace::
+~*^Delete::
+~*^Insert::
+~*^Home::
+~*^End::
+~*^PgUp::
+~*^PgDn::
+~*^Tab::
+~*^Return::
+~*^,::
+~*^.::
+~*^/::
+~*^;::
+~*^'::
+~*^[::
+~*^]::
+~*^\::
+~*^-::
+~*^=::
+~*^`::
+~*^F1::
+~*^F2::
+~*^F3::
+~*^F4::
+~*^F5::
+~*^F6::
+~*^F7::
+~*^F8::
+~*^F9::
+~*^F10::
+~*^F11::
+~*^F12::
+    g_AbortSendEsc := true
+    return
+
 ; Key / mouse rebindings
-; For remapping capslock to control and escape I use https://gist.github.com/sedm0784/4443120
 
 ; Switching desktops
 XButton1 & WheelLeft::Send, ^#{Left}
 XButton1 & WheelRight::Send, ^#{Right}
+XButton1 & p::Winset, Alwaysontop, , A
 
 ; Chrome specific mouse aids
 #IfWinActive ahk_exe chrome.exe
@@ -87,20 +192,44 @@ return
 ::/c::©
 ::/tm::™
 ::/r::®
+::/deg::°
 ::/root::√
 ::/sqrt::√
 ::/inf::∞
 ::/infinity::∞
 ::/!=::≠
+::/notequal::≠
+::/pi::π
+::/tau::τ
+::/not::¬
+::/or::∪
+::/union::∪
+::/and::∩
+::/intersection::∩
+::/subset::⊆
+::/notsubset::⊄
+::/superset::⊇
+::/notsuperset::⊅
+::/element::∈
+::/in::∈
+::/notelement::∉
+::/empty::∅
+::/forall::∀
+::/therefore::∴
 
-; Spanish chareters
+; Language chareters
 :*?:/a``::á
 :*?:/e``::é
 :*?:/i``::í
 :*?:/o``::ó
 :*?:/u``::ú
 :*?:/n~::ñ
-:*?:/uu::ü
+:*?:/a`::::ä
+:*?:/e`::::ë
+:*?:/i`::::ï
+:*?:/o`::::ö
+:*?:/u`::::ü
+
 :*?:/??::¿
 :*?:/!!::¡
 
@@ -196,27 +325,6 @@ return
 	;/::/
 return
 
-; ; Num Lock Toggles emojis and settings
-; #if !GetKeyState("NumLock", "T")
-; 	;NumpadIns:: ; 0
-; 	NumpadEnd::Send, ¯\_(ツ)_/¯ ; 1
-; 	NumpadDown::Send, (╯°□°）╯︵ ┻━┻ ; 2
-; 	+NumpadDown::Send, ┬──┬◡ﾉ(° -°ﾉ) ; #2
-; 	NumpadPgdn::Send, ( ͡° ͜ʖ ͡°) ; 3
-; 	;NumpadLeft:: ; 4
-; 	;NumpadClear:: ; 5
-; 	;NumpadRight:: ; 6
-; 	;NumpadHome:: ; 7
-; 	;NumpadUp:: ; 8
-; 	;NumpadPgup:: ; 9
-; 	;NumpadDiv::Reload ; /
-; 	;NumpadMult::Suspend ; *
-; 	;NumpadSub:: ; -
-; 	;NumpadAdd:: ; +
-; 	;NumpadEnter:: ; Enter
-; 	;NumpadDel:: ; Del
-; return
-
 ; Layer ONE
 #if layer=1
 	; Navigation
@@ -227,6 +335,7 @@ return
 	u::Home
 	i::End
 
+	; Mouse
 	SetDefaultMouseSpeed, 0 ; Sets the delay of mouse speed to instant
 	e::MouseMove, 0, -25, 100, R
 	d::MouseMove, 0, 25, 100, R
@@ -246,8 +355,25 @@ return
 	t::WheelUp
 	g::WheelDown
 
+	; Mouse macros
+	a::AllMouse("a")
+	z::AllMouse("z")
+	x::AllMouse("x")
+
 	BackSpace::Delete
 
+	; Color Picker
+	c::
+	MouseGetPos, MouseX, MouseY
+	PixelGetColor, color, %MouseX%, %MouseY%, RGB
+	color := SubStr(color, 3, 6)
+	color = #%color%
+	ToolTip, %color%
+	SetTimer, RemoveToolTip, -2000
+	Clipboard := color
+	return
+
+	; Applications
 	`:: ; Launch / Close NotePad
 	SetTitleMatchMode, 2
 	IfWinExist Untitled - Notepad
@@ -264,9 +390,66 @@ return
 	else
 		Run notepad.exe
 	SetTitleMatchMode, 1
+	return
 
-
+	+`:: ; Launch / Close Paint
+	SetTitleMatchMode, 2
+	IfWinExist Untitled - Paint
+	{
+		WinClose
+		IfWinExist Paint
+		{
+			WinActivate Paint
+			Send, {Tab}
+			Sleep, 200
+			Send, {Enter}
+		}
+	}
+	else
+		Run mspaint.exe
+	SetTitleMatchMode, 1
+	return
 return
+
+RemoveToolTip:
+	ToolTip
+Return
+
+; Make sure you declare all of these variables as global
+mposax:=0
+mposay:=0
+mposzx:=0
+mposzy:=0
+mposxx:=0
+mposxy:=0
+
+AllMouse(keyname) {
+	KeyWait, %keyname%, T0.5
+		err:=ErrorLevel
+		if err { ; Hold
+			SetMouse(keyname)
+		}
+		else {   ; Tap
+			LoadMouse(keyname)
+		}
+}
+
+SetMouse(keyname) { ; This makes my head hurt
+	namex=mpos%keyname%x
+	namey=mpos%keyname%y
+	MouseGetPos, %namex%, %namey%
+	varx:=%namex%
+	vary:=%namey%
+	ToolTip, %varx% %vary%
+	SetTimer, RemoveToolTip, -2000
+}
+
+LoadMouse(keyname) { ; Makes my head hurt but less
+	varx:=mpos%keyname%x
+	vary:=mpos%keyname%y	
+	MouseMove, %varx%, %vary%
+}
+
 
 SwapAlt() {
 	if (whichAlt = 1) {

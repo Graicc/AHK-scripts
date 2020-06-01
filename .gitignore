@@ -3,3 +3,4 @@
 *.ahk~
 TODO.md
 settings.ini
+.vscode/*
