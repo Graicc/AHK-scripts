@@ -1,72 +1,486 @@
-﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
-; #Warn  ; Enable warnings to assist with detecting common errors.
-SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+﻿; AHK Settings
+#NoEnv
+SendMode Input
+SetWorkingDir %A_ScriptDir%
+#MaxHotkeysPerInterval 200
 #SingleInstance force
 
-;Key / mouse rebindings
-;For remapping capslock to control and escape I use https://gist.github.com/sedm0784/4443120
+; Custom tray menu
+Menu, tray, Icon, icon.png
+Menu, tray, NoStandard
+Menu, tray, add, Reload, Reload
+Menu, tray, Default, Reload
+Menu, tray, add, Exit, Exit
 
-XButton1 & WheelLeft::Send ^#{Left}
-XButton1 & WheelRight::Send ^#{Right}
+Menu, tray, add
 
-;Chrome specific mouse aids
-#IfWinActive ahk_exe chrome.exe 
+global whichAlt:=2
+Menu, tray, add, Right Alt, SwapAlt
+
+Load() ; Load Settings
+
+; Save on exit
+OnExit("Save")
+
+; Setting togglable keys
+SetNumLockState, On
+SetCapsLockState, Off
+
+; Caps lock to ctrl and esc https://gist.github.com/sedm0784/4443120
+g_LastCtrlKeyDownTime := 0
+g_AbortSendEsc := false
+g_ControlRepeatDetected := false
+
+*CapsLock::
+    if (g_ControlRepeatDetected)
+    {
+        return
+    }
+
+    send,{Ctrl down}
+    g_LastCtrlKeyDownTime := A_TickCount
+    g_AbortSendEsc := false
+    g_ControlRepeatDetected := true
+
+    return
+
+*CapsLock Up::
+    send,{Ctrl up}
+    g_ControlRepeatDetected := false
+    if (g_AbortSendEsc)
+    {
+        return
+    }
+    current_time := A_TickCount
+    time_elapsed := current_time - g_LastCtrlKeyDownTime
+    if (time_elapsed <= 250)
+    {
+        SendInput {Esc}
+    }
+    return
+
+~*^a::
+~*^b::
+~*^c::
+~*^d::
+~*^e::
+~*^f::
+~*^g::
+~*^h::
+~*^i::
+~*^j::
+~*^k::
+~*^l::
+~*^m::
+~*^n::
+~*^o::
+~*^p::
+~*^q::
+~*^r::
+~*^s::
+~*^t::
+~*^u::
+~*^v::
+~*^w::
+~*^x::
+~*^y::
+~*^z::
+~*^1::
+~*^2::
+~*^3::
+~*^4::
+~*^5::
+~*^6::
+~*^7::
+~*^8::
+~*^9::
+~*^0::
+~*^Space::
+~*^Backspace::
+~*^Delete::
+~*^Insert::
+~*^Home::
+~*^End::
+~*^PgUp::
+~*^PgDn::
+~*^Tab::
+~*^Return::
+~*^,::
+~*^.::
+~*^/::
+~*^;::
+~*^'::
+~*^[::
+~*^]::
+~*^\::
+~*^-::
+~*^=::
+~*^`::
+~*^F1::
+~*^F2::
+~*^F3::
+~*^F4::
+~*^F5::
+~*^F6::
+~*^F7::
+~*^F8::
+~*^F9::
+~*^F10::
+~*^F11::
+~*^F12::
+    g_AbortSendEsc := true
+    return
+
+; Key / mouse rebindings
+
+; Switching desktops
+XButton1 & WheelLeft::Send, ^#{Left}
+XButton1 & WheelRight::Send, ^#{Right}
+XButton1 & p::Winset, Alwaysontop, , A
+
+; Chrome specific mouse aids
+#IfWinActive ahk_exe chrome.exe
 {
+	; Horizontal scroll changes tabs
 	WheelLeft::Send ^+{Tab}
 	WheelRight::Send ^{Tab}
+	; Back + Left/Right closes or restores tabs
 	XButton1 & LButton::Send ^w
 	XButton1 & RButton::Send ^+t
+	; Back + Middle is forward
 	XButton1 & MButton::XButton2
 	XButton1::XButton1
 }
 #IfWinActive
 
-$LAlt::
-    layer:=1
+; Media controls
+; New keyboard so these aren't necessary
+; ^Volume_Mute::Media_Play_Pause
+; ^Volume_Down::Media_Prev
+; ^Volume_Up::Media_Next
+
+; I figured this out on my own im literally einstien
+!Volume_Up::+Tab
+^Volume_Up::+Tab
+
+!Volume_Down::Tab
+^Volume_Down::Tab
+
+; <!Volume_Up::ShiftAltTab ; Works but isn't as cool
+; <!Volume_Down::AltTab
+
+; don't have a sleep key rip
+Media_Stop::DllCall("PowrProf\SetSuspendState", "int", 0, "int", 0, "int", 0)
+^Media_Stop::Media_Stop
+
+; Hotstrings
+::/ahk date::
+	FormatTime, CurrentDateTime,, M/d/yy
+	SendInput %CurrentDateTime%
 return
 
-$LAlt up::
-	#if layer=1
-    	layer:=0
+::/ahk time::
+	FormatTime, CurrentDateTime,, h:mm tt
+	SendInput %CurrentDateTime%
 return
 
-;Layer ONE
+::/shrug::¯\_(ツ)_/¯
+::/lenny::( ͡° ͜ʖ ͡°)
+::/table::(╯°□°）╯︵ ┻━┻
+::/untable::┬──┬◡ﾉ(° -°ﾉ)
+
+::/c::©
+::/tm::™
+::/r::®
+::/deg::°
+::/root::√
+::/sqrt::√
+::/inf::∞
+::/infinity::∞
+::/!=::≠
+::/notequal::≠
+::/pi::π
+::/tau::τ
+::/not::¬
+::/or::∪
+::/union::∪
+::/and::∩
+::/intersection::∩
+::/subset::⊆
+::/notsubset::⊄
+::/superset::⊇
+::/notsuperset::⊅
+::/element::∈
+::/in::∈
+::/notelement::∉
+::/empty::∅
+::/forall::∀
+::/therefore::∴
+
+; Language chareters
+:*?:/a``::á
+:*?:/e``::é
+:*?:/i``::í
+:*?:/o``::ó
+:*?:/u``::ú
+:*?:/n~::ñ
+:*?:/a`::::ä
+:*?:/e`::::ë
+:*?:/i`::::ï
+:*?:/o`::::ö
+:*?:/u`::::ü
+
+:*?:/??::¿
+:*?:/!!::¡
+
+; Layer switching
+#if whichAlt=1
+	$LAlt::layer:=1
+	$LAlt up::
+		#if layer=1
+			layer:=0
+		return
+	return
+return
+
+#if whichAlt=2
+	$RAlt::layer:=1
+	$RAlt up::
+		#if layer=1
+			layer:=0
+		return
+	return
+return
+
+#if
+$AppsKey::
+	layer:=2
+return
+$AppsKey up::
+	#if layer=2
+		layer:=0
+	return
+return
+
+; Menu key app shortcuts
+#if layer=2
+	c::Run chrome
+	v::Run code
+	u::Run ubuntu
+	f::Run explorer
+	s::Run spotify
+return
+
+; Scroll Lock Toggles Workman Layout
+#if GetKeyState("ScrollLock", "T")
+	;`::`
+	;1::1
+	;2::2
+	;3::3
+	;4::4
+	;5::5
+	;6::6
+	;7::7
+	;8::8
+	;9::9
+	;0::0
+	;-::-
+	;=::=
+
+	;q::q
+	w::d
+	e::r
+	r::w
+	t::b
+	y::j
+	u::f
+	i::u
+	o::p
+	p::`;
+	;[::[
+	;]::]
+	;\::\
+
+	;a::a
+	;s::s
+	d::h
+	f::t
+	;g::g
+	h::y
+	j::n
+	k::e
+	l::o
+	`;::i
+	;'::'
+
+	;z::z
+	;x::x
+	c::m
+	v::c
+	b::v
+	n::k
+	m::l
+	;,::,
+	;.::.
+	;/::/
+return
+
+; Layer ONE
 #if layer=1
+	; Navigation
+	h::Left
+	j::Down
+	k::Up
+	l::Right
+	u::Home
+	i::End
 
-;Navigation
-h::Left
-j::Up
-k::Down
-l::Right
-u::Home
-i::End
-^j::Send, {WheelUp}
-^k::Send, {WheelDown}
+	; Mouse
+	SetDefaultMouseSpeed, 0 ; Sets the delay of mouse speed to instant
+	e::MouseMove, 0, -25, 100, R
+	d::MouseMove, 0, 25, 100, R
+	s::MouseMove, -25, 0, 100, R
+	f::MouseMove, 25, 0, 100, R
+	+e::MouseMove, 0, -5, 100, R
+	+d::MouseMove, 0, 5, 100, R
+	+s::MouseMove, -5, 0, 100, R
+	+f::MouseMove, 5, 0, 100, R
+	^e::MouseMove, 0, -100, 100, R
+	^d::MouseMove, 0, 100, 100, R
+	^s::MouseMove, -100, 0, 100, R
+	^f::MouseMove, 100, 0, 100, R
+	r::LButton
+	w::RButton
+	q::MButton
+	t::WheelUp
+	g::WheelDown
 
+	; Mouse macros
+	a::AllMouse("a")
+	z::AllMouse("z")
+	x::AllMouse("x")
 
-BackSpace::Delete
+	BackSpace::Delete
 
-f::
-	SetKeyDelay, 200
-	Send +{F10}
-	Sleep, 200
-	Send {DOWN}     
-	Sleep, 200
-	Send {ENTER}
-return  
+	; Color Picker
+	c::
+	MouseGetPos, MouseX, MouseY
+	PixelGetColor, color, %MouseX%, %MouseY%, RGB
+	color := SubStr(color, 3, 6)
+	color = #%color%
+	ToolTip, %color%
+	SetTimer, RemoveToolTip, -2000
+	Clipboard := color
+	return
 
-`::
-IfWinExist Untitled - Notepad
-{
-	WinClose
-	IfWinExist Notepad
-    {
-		Send, {Tab}
-		Sleep, 200
-		Send, {Enter}
-    }
-}
-else
-	Run notepad.exe
+	; Applications
+	`:: ; Launch / Close NotePad
+	SetTitleMatchMode, 2
+	IfWinExist Untitled - Notepad
+	{
+		WinClose
+		IfWinExist Notepad
+		{
+			WinActivate Notepad
+			Send, {Tab}
+			Sleep, 200
+			Send, {Enter}
+		}
+	}
+	else
+		Run notepad.exe
+	SetTitleMatchMode, 1
+	return
+
+	+`:: ; Launch / Close Paint
+	SetTitleMatchMode, 2
+	IfWinExist Untitled - Paint
+	{
+		WinClose
+		IfWinExist Paint
+		{
+			WinActivate Paint
+			Send, {Tab}
+			Sleep, 200
+			Send, {Enter}
+		}
+	}
+	else
+		Run mspaint.exe
+	SetTitleMatchMode, 1
+	return
 return
+
+RemoveToolTip:
+	ToolTip
+Return
+
+; Make sure you declare all of these variables as global
+mposax:=0
+mposay:=0
+mposzx:=0
+mposzy:=0
+mposxx:=0
+mposxy:=0
+
+AllMouse(keyname) {
+	KeyWait, %keyname%, T0.5
+		err:=ErrorLevel
+		if err { ; Hold
+			SetMouse(keyname)
+		}
+		else {   ; Tap
+			LoadMouse(keyname)
+		}
+}
+
+SetMouse(keyname) { ; This makes my head hurt
+	namex=mpos%keyname%x
+	namey=mpos%keyname%y
+	MouseGetPos, %namex%, %namey%
+	varx:=%namex%
+	vary:=%namey%
+	ToolTip, %varx% %vary%
+	SetTimer, RemoveToolTip, -2000
+}
+
+LoadMouse(keyname) { ; Makes my head hurt but less
+	varx:=mpos%keyname%x
+	vary:=mpos%keyname%y	
+	MouseMove, %varx%, %vary%
+}
+
+
+SwapAlt() {
+	if (whichAlt = 1) {
+		whichAlt:=2
+	}
+	else if (whichAlt = 2)
+	{
+		whichAlt:=1
+	}
+	Menu, tray, ToggleCheck, Right alt
+}
+
+Reload() {
+	Reload
+}
+
+Exit() {
+	ExitApp
+}
+
+Save() {
+	; Save settings
+	global whichAlt
+	IniWrite, %whichAlt%, %A_ScriptDir%\settings.ini, settings, whichAlt
+}
+
+Load() {
+	; Loading settings
+	IniRead, whichAlt, settings.ini, settings, whichAlt, 2
+	; Setting Checkboxes
+	if (whichAlt==2) {
+		Menu, tray, ToggleCheck, Right Alt
+	}
+}
