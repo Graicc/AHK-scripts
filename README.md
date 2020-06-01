@@ -3,48 +3,59 @@ A collection of the AHK scripts that I use. Feel free use them.
 
 Licensed under the MIT License.
 
-## Changes to your normal input devices
-This script is based around the idea of layers. The main layer used right now is a alt layer opened by holding the right alt key (*Note: This may affect keyboard shortcuts already mapped to the alt layer*). There are also a few general and application specific rebindings.
+## Features:
+Auto set num and caps lock
+caps lock is now control and escape
 
-## Windows Keybinds
-| Keybind                         | Result                                                  |
-| ------------------------------- | ------------------------------------------------------- |
-| Mouse Back + Left / Right Click | Swaps desktops (ctrl + win + left / ctrl + win + right) |
+Back button and mouse tilt wheel
+Back button and p toggles always on top
 
-## Music Keybinds
-| Keybind               | Result        |
-| --------------------- | ------------- |
-| Control + Mute        | Play / Pause  |
-| Control + Volume down | Previous Song |
-| Control + Volume up   | Next song     |
+In Chrome:
+tilt wheel switches tabs
+Back button and left click closes tab
+Back button and right click reopens closed tabs
+Back button and middle click is Forawrd
 
-## Chrome Keybinds
-| Keybind                          | Result                                                     |
-| -------------------------------- | ---------------------------------------------------------- |
-| Mouse Wheel Left / Right         | Swap tabs left and right (ctrl + tab / ctrl + shift + tab) |
-| Mouse Back + Left / Right Click  | Close and restore tabs (ctrl + w / ctrl + shift + t)       |
-| Mouse Back + Middle Mouse Button | Mouse Forward                                              |
+Control and volume switches tabs
+Alt and volume switches windows
 
-(*Note: I also use https://gist.github.com/sedm0784/4443120 for remapping capslock to escape if tapped and control if held down*)
+Stop key sends sleep command
+Control stop sends stop
 
-## Layers
-There are also layers contained in the script.
+/ahk date and /ahk time type time and date
+/shrug, /lenny, /table, /untable, /c, /tm, /r, /deg, /root, /sqrt, /inf, /infinity, /!=, /notequal, /pi, /tau, /not, /or, /union, /and, /intersection, /subset, /notsubset, /, uperset, /notsuperset, /element, /in, /notelement, /empty, /forall, /therefore
+are all self explanatory
 
-### Layer 1: Alt Layer
-(*Note: You can change what alt key triggers this by selecting the swap alt option from the context menu on the system tray icon*)
-| Keybind         | Result                            |
-| --------------- | --------------------------------- |
-| HJKL            | Left, Down, Up, Left (vim layout) |
-| U / I           | Home / End                        |
-| Control + J / K | Mouse Wheel Up / Mouse Wheel Down |
-| Backspace       | Del                               |
-| Backtick        | Opens or closes a notepad window  |
+/letter and backtick or colon adds diacritical mark
+/n~ is ñ
+/?? and /!! are ¿ and ¡
 
-### Layer 2: Application Layer
-| Keybind | Result        |
-| ------- | ------------- |
-| c       | Open Chrome   |
-| v       | Open Code     |
-| u       | Open Ubuntu   |
-| f       | Open Explorer |
-| s       | Open Spotify  |
+scroll lock toggles workman layout
+
+alt key selected makes layer one
+apps key makes layer two
+
+layer two: runs programs
+	c: chrome
+	v: vscode
+	u: ubuntu terminal
+	f: file explorer
+	s: spotify
+
+layer one:
+	hjkl: vim style cursor
+	u/i: home/end
+
+	esdf are mouse movement
+	control for more movement, shift for less
+	r/w/q are left/right/middle mouse buttons
+	t/g are wheel up/down
+
+	backpace is delete
+
+	a,z,x are mouse macros: hold to set mouse pos, tap to move mouse to pos
+
+	c is a color picker, copies to clipboard and displays tooltip
+
+	` launches or closes notepad
+	shift ` launces or closes paint
