@@ -133,10 +133,18 @@ g_ControlRepeatDetected := false
 
 ; Key / mouse rebindings
 
-; Switching desktops
+; DPI buttons to WheelLeft/Right
+#InputLevel, 10
+F13::Send, {WheelLeft}
+F14::Send, {WheelRight}
+#InputLevel, 0
+
+; XButton binds
 XButton1 & WheelLeft::Send, ^#{Left}
 XButton1 & WheelRight::Send, ^#{Right}
-XButton1 & p::Winset, Alwaysontop, , A
+XButton1 & MButton::Send, #{Tab}
+XButton1 & WheelUp::ShiftAltTab
+XButton1 & WheelDown::AltTab
 
 ; Chrome specific mouse aids
 #IfWinActive ahk_exe chrome.exe
@@ -147,8 +155,8 @@ XButton1 & p::Winset, Alwaysontop, , A
 	; Back + Left/Right closes or restores tabs
 	XButton1 & LButton::Send ^w
 	XButton1 & RButton::Send ^+t
-	; Back + Middle is forward
-	XButton1 & MButton::XButton2
+	; Back + Middle is forward jk mouse has forward now
+	; XButton1 & MButton::XButton2
 	XButton1::XButton1
 }
 #IfWinActive
@@ -189,7 +197,7 @@ return
 ::/table::(╯°□°）╯︵ ┻━┻
 ::/untable::┬──┬◡ﾉ(° -°ﾉ)
 
-::/c::©
+::/copyright::©
 ::/tm::™
 ::/r::®
 ::/deg::°
@@ -229,6 +237,7 @@ return
 :*?:/i`::::ï
 :*?:/o`::::ö
 :*?:/u`::::ü
+:*?:/ae::æ
 
 :*?:/??::¿
 :*?:/!!::¡
@@ -335,6 +344,11 @@ return
 	u::Home
 	i::End
 
+	; Desktops
+	y::Send, ^#{Left}
+	o::Send, ^#{Right}
+	p::Send, #{Tab}
+
 	; Mouse
 	SetDefaultMouseSpeed, 0 ; Sets the delay of mouse speed to instant
 	e::MouseMove, 0, -25, 100, R
@@ -360,7 +374,23 @@ return
 	z::AllMouse("z")
 	x::AllMouse("x")
 
+	.::Winset, Alwaysontop, , A
+
 	BackSpace::Delete
+
+	; F keys
+	F1::F13
+	F2::F14
+	F3::F15
+	F4::F16
+	F5::F17
+	F6::F18
+	F7::F19
+	F8::F20
+	F9::F21
+	F10::F22
+	F11::F23
+	F12::F24
 
 	; Color Picker
 	c::
