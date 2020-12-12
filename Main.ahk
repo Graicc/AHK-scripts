@@ -242,6 +242,14 @@ return
 :*?:/??::¿
 :*?:/!!::¡
 
+#S::
+WinMove, A,, 260, 90, 1400, 900
+return
+
+#D::
+WinMove, A,, 90, 50, 1740, 980
+return
+
 ; Layer switching
 #if whichAlt=1
 	$LAlt::layer:=1
