@@ -242,12 +242,38 @@ return
 :*?:/??::¿
 :*?:/!!::¡
 
+CenterWindow()
+{
+	WinExist("A")
+	WinGetPos,,, sizeX, sizeY
+	WinMove, (A_ScreenWidth/2)-(sizeX/2), (A_ScreenHeight/2)-(sizeY/2)
+}
+
+ResizeWindow(xSize, ySize)
+{
+	WinMove, A,, , , xSize, ySize
+	CenterWindow()
+}
+
 #S::
-WinMove, A,, 260, 90, 1400, 900
+ResizeWindow(1400, 900)
 return
 
 #D::
-WinMove, A,, 90, 50, 1740, 980
+ResizeWindow(1740, 980)
+return
+
+#F::
+ResizeWindow(900, 650)
+return
+
+#V::
+ResizeWindow(1150, 780)
+return
+
+; Center window
+#C::
+CenterWindow()
 return
 
 ; Layer switching
