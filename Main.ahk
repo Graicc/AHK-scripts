@@ -1,4 +1,7 @@
-﻿; AHK Settings
+﻿GroupAdd, Browsers, ahk_exe chrome.exe
+GroupAdd, Browsers, ahk_exe firefox.exe
+
+; AHK Settings
 #NoEnv
 SendMode Input
 SetWorkingDir %A_ScriptDir%
@@ -146,8 +149,8 @@ XButton1 & MButton::Send, #{Tab}
 XButton1 & WheelUp::ShiftAltTab
 XButton1 & WheelDown::AltTab
 
-; Chrome specific mouse aids
-#IfWinActive ahk_exe chrome.exe
+; Browser specific mouse aids
+#IfWinActive ahk_group Browsers
 {
 	; Horizontal scroll changes tabs
 	WheelLeft::Send ^+{Tab}
