@@ -318,6 +318,7 @@ return
 	;]::]
 	;\::\
 
+
 	;a::a
 	;s::s
 	d::h
@@ -445,6 +446,17 @@ return
 	}
 	else
 		Run mspaint.exe
+	SetTitleMatchMode, 1
+	return
+
+	^`:: ; Launch / Close NeoVim
+	SetTitleMatchMode, 2
+	IfWinExist Neovim
+	{
+		WinClose
+	}
+	else
+		Run nvim-qt.exe
 	SetTitleMatchMode, 1
 	return
 return
