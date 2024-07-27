@@ -1,4 +1,7 @@
-﻿; AHK Settings
+﻿GroupAdd, Browsers, ahk_exe chrome.exe
+GroupAdd, Browsers, ahk_exe firefox.exe
+
+; AHK Settings
 #NoEnv
 SendMode Input
 SetWorkingDir %A_ScriptDir%
@@ -146,8 +149,8 @@ XButton1 & MButton::Send, #{Tab}
 XButton1 & WheelUp::ShiftAltTab
 XButton1 & WheelDown::AltTab
 
-; Chrome specific mouse aids
-#IfWinActive ahk_exe chrome.exe
+; Browser specific mouse aids
+#IfWinActive ahk_group Browsers
 {
 	; Horizontal scroll changes tabs
 	WheelLeft::Send ^+{Tab}
@@ -242,12 +245,38 @@ return
 :*?:/??::¿
 :*?:/!!::¡
 
+CenterWindow()
+{
+	WinExist("A")
+	WinGetPos,,, sizeX, sizeY
+	WinMove, (A_ScreenWidth/2)-(sizeX/2), (A_ScreenHeight/2)-(sizeY/2)
+}
+
+ResizeWindow(xSize, ySize)
+{
+	WinMove, A,, , , xSize, ySize
+	CenterWindow()
+}
+
 #S::
-WinMove, A,, 260, 90, 1400, 900
+ResizeWindow(1400, 900)
 return
 
 #D::
-WinMove, A,, 90, 50, 1740, 980
+ResizeWindow(1740, 980)
+return
+
+#F::
+ResizeWindow(900, 650)
+return
+
+#V::
+ResizeWindow(1150, 780)
+return
+
+; Center window
+#C::
+CenterWindow()
 return
 
 ; Layer switching
