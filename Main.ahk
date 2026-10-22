@@ -334,6 +334,15 @@ return
 	l::Right
 	u::Home
 	i::End
+	y::StepDesktop(-1)
+	o::StepDesktop(1)
+
+	; Jump to desktop N
+	1::GoToDesktop(1)
+	2::GoToDesktop(2)
+	3::GoToDesktop(3)
+	4::GoToDesktop(4)
+	5::GoToDesktop(5)
 
 	; Mouse
 	SetDefaultMouseSpeed, 0 ; Sets the delay of mouse speed to instant
@@ -450,6 +459,60 @@ LoadMouse(keyname) { ; Makes my head hurt but less
 	MouseMove, %varx%, %vary%
 }
 
+
+; Uses VirtualDesktopAccessor.dll (instant switch) if it sits next to this script,
+; otherwise steps there with Ctrl+Win+Left/Right (animated)
+HasVda() {
+	static vda := ""
+	if (vda = "") {
+		vda := DllCall("LoadLibrary", "Str", A_ScriptDir "\VirtualDesktopAccessor.dll", "Ptr")
+	}
+	return vda
+}
+
+StepDesktop(delta) {
+	if (!HasVda()) {
+		dir := delta > 0 ? "Right" : "Left"
+		Send, ^#{%dir%}
+		return
+	}
+
+	target := DllCall("VirtualDesktopAccessor\GetCurrentDesktopNumber", "Int") + delta
+	count := DllCall("VirtualDesktopAccessor\GetDesktopCount", "Int")
+	if (target >= 0 && target < count) {
+		DllCall("VirtualDesktopAccessor\GoToDesktopNumber", "Int", target)
+	}
+}
+
+GoToDesktop(n) {
+	if (HasVda()) {
+		DllCall("VirtualDesktopAccessor\GoToDesktopNumber", "Int", n - 1)
+		return
+	}
+
+	key := "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VirtualDesktops"
+	RegRead, ids, %key%, VirtualDesktopIDs
+	RegRead, cur, %key%, CurrentVirtualDesktop
+	count := StrLen(ids) // 32
+	if (n > count || cur = "") {
+		return
+	}
+
+	current := 1
+	Loop, %count% {
+		if (SubStr(ids, (A_Index - 1) * 32 + 1, 32) = cur) {
+			current := A_Index
+			break
+		}
+	}
+
+	delta := n - current
+	dir := delta > 0 ? "Right" : "Left"
+	Loop, % Abs(delta) {
+		Send, ^#{%dir%}
+		Sleep, 50
+	}
+}
 
 SwapAlt() {
 	if (whichAlt = 1) {
