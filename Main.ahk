@@ -366,13 +366,23 @@ return
 
 	; Mouse macros
 	a::AllMouse("a")
-	z::AllMouse("z")
-	x::AllMouse("x")
+
+	; Focus window by screen quadrant
+	z::FocusQuadrant(0, 0)
+	x::FocusQuadrant(1, 0)
+	c::FocusQuadrant(0, 1)
+	v::FocusQuadrant(1, 1)
+
+	; Snap active window to quadrant
+	^z::SnapActiveToQuadrant(0, 0)
+	^x::SnapActiveToQuadrant(1, 0)
+	^c::SnapActiveToQuadrant(0, 1)
+	^v::SnapActiveToQuadrant(1, 1)
 
 	BackSpace::Delete
 
 	; Color Picker
-	c::
+	b::
 	MouseGetPos, MouseX, MouseY
 	PixelGetColor, color, %MouseX%, %MouseY%, RGB
 	color := SubStr(color, 3, 6)
@@ -480,13 +490,191 @@ StepDesktop(delta) {
 	target := DllCall("VirtualDesktopAccessor\GetCurrentDesktopNumber", "Int") + delta
 	count := DllCall("VirtualDesktopAccessor\GetDesktopCount", "Int")
 	if (target >= 0 && target < count) {
-		DllCall("VirtualDesktopAccessor\GoToDesktopNumber", "Int", target)
+		VdaGoTo(target)
 	}
+}
+
+; Focusing the desktop (present on every desktop) first stops windows on the target
+; desktop flashing; the taskbar would also work but pops up when auto-hidden
+VdaGoTo(index) {
+	WinActivate, ahk_class Progman
+	DllCall("VirtualDesktopAccessor\GoToDesktopNumber", "Int", index)
+	Sleep, 50
+	FocusTopWindowOnDesktop(index)
+}
+
+FocusTopWindowOnDesktop(index) {
+	; WinGet list is in z-order, topmost first
+	WinGet, wins, List
+	Loop, %wins% {
+		hwnd := wins%A_Index%
+		if (!IsFocusableWindow(hwnd)) {
+			continue
+		}
+		if (DllCall("VirtualDesktopAccessor\IsWindowOnDesktopNumber", "Ptr", hwnd, "Int", index, "Int") = 1) {
+			WinActivate, ahk_id %hwnd%
+			return
+		}
+	}
+}
+
+IsFocusableWindow(hwnd) {
+	WinGetTitle, title, ahk_id %hwnd%
+	WinGetClass, cls, ahk_id %hwnd%
+	WinGet, exStyle, ExStyle, ahk_id %hwnd%
+	WinGet, minMax, MinMax, ahk_id %hwnd%
+	return !(title = "" || minMax = -1 || (exStyle & 0x80) || cls = "Shell_TrayWnd" || cls = "Progman" || cls = "WorkerW")
+}
+
+; Windows on other virtual desktops are cloaked
+IsCloaked(hwnd) {
+	VarSetCapacity(cloaked, 4, 0)
+	DllCall("dwmapi\DwmGetWindowAttribute", "Ptr", hwnd, "UInt", 14, "Ptr", &cloaked, "UInt", 4)
+	return NumGet(cloaked, 0, "UInt") != 0
+}
+
+IsFullscreen(hwnd) {
+	WinGet, minMax, MinMax, ahk_id %hwnd%
+	if (minMax = 1) {
+		return true
+	}
+	WinGetPos, x, y, w, h, ahk_id %hwnd%
+	SysGet, monitors, MonitorCount
+	Loop, %monitors% {
+		SysGet, m, Monitor, %A_Index%
+		if (x <= mLeft && y <= mTop && x + w >= mRight && y + h >= mBottom) {
+			return true
+		}
+	}
+	return false
+}
+
+; Windows on this desktop that are (or aren't) fullscreen, sorted by exe name then title
+GetSortedWindows(fullscreen) {
+	list := ""
+	WinGet, wins, List
+	Loop, %wins% {
+		hwnd := wins%A_Index%
+		if (!IsFocusableWindow(hwnd) || IsCloaked(hwnd) || IsFullscreen(hwnd) != fullscreen) {
+			continue
+		}
+		WinGet, exe, ProcessName, ahk_id %hwnd%
+		WinGetTitle, title, ahk_id %hwnd%
+		list .= exe " " title "`t" hwnd "`n"
+	}
+	list := RTrim(list, "`n")
+	Sort, list
+	result := []
+	Loop, Parse, list, `n
+	{
+		result.Push(SubStr(A_LoopField, InStr(A_LoopField, "`t", false, 0) + 1))
+	}
+	return result
+}
+
+; If this desktop has fullscreen windows, focus the Nth window (Z/X/C/V = 1-4),
+; counting fullscreen windows first, then the rest. Otherwise focus the topmost
+; window whose centre is in the given quadrant of the monitor holding the active
+; window (or the mouse, if nothing is active)
+FocusQuadrant(right, bottom) {
+	ordered := GetSortedWindows(true)
+	if (ordered.Length()) {
+		for i, hwnd in GetSortedWindows(false) {
+			ordered.Push(hwnd)
+		}
+		hwnd := ordered[1 + right + 2 * bottom]
+		if (hwnd) {
+			FocusAndCenterMouse(hwnd)
+		}
+		return
+	}
+
+	CoordMode, Mouse, Screen
+	WinGetPos, ax, ay, aw, ah, A
+	if (aw = "") {
+		MouseGetPos, px, py
+	}
+	else {
+		px := ax + aw // 2
+		py := ay + ah // 2
+	}
+
+	SysGet, monitors, MonitorCount
+	Loop, %monitors% {
+		SysGet, m, MonitorWorkArea, %A_Index%
+		if (px >= mLeft && px < mRight && py >= mTop && py < mBottom) {
+			break
+		}
+	}
+	midX := (mLeft + mRight) // 2
+	midY := (mTop + mBottom) // 2
+
+	WinGet, wins, List
+	Loop, %wins% {
+		hwnd := wins%A_Index%
+		if (!IsFocusableWindow(hwnd) || IsCloaked(hwnd)) {
+			continue
+		}
+		WinGetPos, x, y, w, h, ahk_id %hwnd%
+		cx := x + w // 2
+		cy := y + h // 2
+		if (cx < mLeft || cx >= mRight || cy < mTop || cy >= mBottom) {
+			continue
+		}
+		if ((cx >= midX) = right && (cy >= midY) = bottom) {
+			FocusAndCenterMouse(hwnd)
+			return
+		}
+	}
+}
+
+; Resize the active window to a quarter of its monitor's work area
+SnapActiveToQuadrant(right, bottom) {
+	WinGet, hwnd, ID, A
+	if (!hwnd) {
+		return
+	}
+	WinGet, minMax, MinMax, ahk_id %hwnd%
+	if (minMax != 0) {
+		WinRestore, ahk_id %hwnd%
+	}
+
+	WinGetPos, x, y, w, h, ahk_id %hwnd%
+	cx := x + w // 2
+	cy := y + h // 2
+	SysGet, monitors, MonitorCount
+	Loop, %monitors% {
+		SysGet, m, MonitorWorkArea, %A_Index%
+		if (cx >= mLeft && cx < mRight && cy >= mTop && cy < mBottom) {
+			break
+		}
+	}
+
+	; Windows have invisible resize borders; size so the visible frame fills the quadrant
+	VarSetCapacity(rect, 16, 0)
+	DllCall("dwmapi\DwmGetWindowAttribute", "Ptr", hwnd, "UInt", 9, "Ptr", &rect, "UInt", 16)
+	padL := NumGet(rect, 0, "Int") - x
+	padT := NumGet(rect, 4, "Int") - y
+	padR := x + w - NumGet(rect, 8, "Int")
+	padB := y + h - NumGet(rect, 12, "Int")
+
+	halfW := (mRight - mLeft) // 2
+	halfH := (mBottom - mTop) // 2
+	qx := mLeft + right * halfW
+	qy := mTop + bottom * halfH
+	WinMove, ahk_id %hwnd%, , qx - padL, qy - padT, halfW + padL + padR, halfH + padT + padB
+}
+
+FocusAndCenterMouse(hwnd) {
+	WinActivate, ahk_id %hwnd%
+	CoordMode, Mouse, Screen
+	WinGetPos, x, y, w, h, ahk_id %hwnd%
+	MouseMove, x + w // 2, y + h // 2, 0
 }
 
 GoToDesktop(n) {
 	if (HasVda()) {
-		DllCall("VirtualDesktopAccessor\GoToDesktopNumber", "Int", n - 1)
+		VdaGoTo(n - 1)
 		return
 	}
 
